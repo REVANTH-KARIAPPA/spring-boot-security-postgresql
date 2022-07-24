@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.LensCart.entity.Cart;
 import com.LensCart.entity.ERole;
 import com.LensCart.entity.Role;
 import com.LensCart.entity.User;
@@ -14,6 +15,7 @@ import com.LensCart.payload.request.LoginRequest;
 import com.LensCart.payload.request.SignupRequest;
 import com.LensCart.payload.response.JwtResponse;
 import com.LensCart.payload.response.MessageResponse;
+import com.LensCart.repository.CartRepository;
 import com.LensCart.repository.RoleRepository;
 import com.LensCart.repository.UserRepository;
 import com.LensCart.security.jwt.JwtUtils;
@@ -50,6 +52,9 @@ public class AuthController {
 	@Autowired
 	JwtUtils jwtUtils;
 
+	@Autowired
+	CartRepository cartRepository;
+
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -68,7 +73,8 @@ public class AuthController {
 												 userDetails.getId(), 
 												 userDetails.getUsername(), 
 												 userDetails.getEmail(), 
-												 roles));
+												 roles
+				                                  ));
 	}
 
 	@PostMapping("/signup")
@@ -89,6 +95,10 @@ public class AuthController {
 		User user = new User(signUpRequest.getUsername(),
 							 signUpRequest.getEmail(),
 							 encoder.encode(signUpRequest.getPassword()));
+		Cart cart= new Cart();
+	    cartRepository.save(cart);
+
+		user.setCart(cart);
 
 		Set<String> strRoles = signUpRequest.getRole();
 		Set<Role> roles = new HashSet<>();

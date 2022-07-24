@@ -91,14 +91,22 @@ public class User {
 		this.roles = roles;
 	}
 
-	@JsonIgnore
-	@OneToOne(mappedBy = "user")
+
+	@OneToOne
 
 	private Cart cart;
 
-	@JsonIgnore
+
 	@OneToMany
 
 	private List<Orders> orders;
+
+	public void addOrders(Orders o) {
+		this.orders.add(o);
+	}
+	public void removeOrders(Orders o){
+		this.orders.remove(o);
+	}
+
 
 }
